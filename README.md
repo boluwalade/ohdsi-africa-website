@@ -28,6 +28,8 @@ src/
 │   ├── +page.svelte         # Home page
 │   ├── about/
 │   │   └── +page.svelte     # About page
+│   ├── community/
+│   │   └── +page.svelte     # Community page
 │   └── contact/
 │       └── +page.svelte     # Contact page
 ├── app.css                  # Global styles
@@ -61,9 +63,10 @@ The built files will be in the `build/` directory.
 
 - ✅ **Home** - Hero section with announcement banner
 - ✅ **About** - Mission, leadership, and global context
+- ✅ **Community** - National nodes and community engagement
 - ✅ **Contact** - Contact forms and information
 - 🚧 **Blog** - Past events and news (to be added)
-- 🚧 **Community** - National nodes and community info (to be added)
+- 🚧 **Events** - Africa Symposium and other events (to be added)
 
 ## Deployment
 
