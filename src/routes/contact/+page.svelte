@@ -9,7 +9,7 @@
 </svelte:head>
 
 <PageHeader 
-	title="📩 Contact Us" 
+	title="Contact Us" 
 	subtitle="Get in touch with the OHDSI Africa community"
 />
 
@@ -18,7 +18,8 @@
 		<div class="contact-layout">
 			<div class="contact-info">
 				<h2>Get in Touch</h2>
-				<p>Have questions about joining OHDSI Africa or interested in collaboration? We'd love to hear from you! Our community is here to support your health data science journey.</p>
+				<p>Have questions about joining OHDSI Africa or interested in collaboration? We'd love to hear from you!
+					Our community is here to support your data transformation journey.</p>
 				
 				<div class="contact-methods">
 					<div class="contact-method">
@@ -26,7 +27,7 @@
 						<div>
 							<h4>General Inquiries</h4>
 							<p>For general questions, collaboration opportunities, and information about OHDSI Africa</p>
-							<a href="mailto:info@ohdsi-africa.org">info@ohdsi-africa.org</a>
+							<!-- <a href="mailto:info@ohdsi-africa.org">info@ohdsi-africa.org</a> -->
 						</div>
 					</div>
 					

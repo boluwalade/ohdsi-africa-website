@@ -1,15 +1,15 @@
 <section class="announcement-banner">
 	<div class="container">
 		<div class="banner-content">
-			<h2>OHDSI Africa Symposium - Save-the-date!</h2>
+			<h2>Inaugural OHDSI Africa Symposium - Kampala!</h2>
 			<div class="banner-details">
 				<div class="detail-item">
 					<strong>OHDSI Africa Symposium</strong>
-					<span>10-12 November 2025</span>
+					<span>Nov 10-12, 2025 • JCRC & Mestil Hotel</span>
 				</div>
 				<div class="detail-item">
-					<strong>Abstract Submission Deadline</strong>
-					<span>10 September 2025</span>
+					<strong>Collaborator Showcase Deadline</strong>
+					<span>September 10, 2025</span>
 				</div>
 			</div>
 		</div>
