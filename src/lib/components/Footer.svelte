@@ -21,19 +21,19 @@
 				<h4>Other Chapters</h4>
 				<ul>
 					<li><a href="https://www.ohdsi-europe.org" target="_blank" rel="noopener noreferrer">OHDSI Europe</a></li>
-					<li><a href="#" target="_blank" rel="noopener noreferrer">OHDSI Asia</a></li>
-					<li><a href="#" target="_blank" rel="noopener noreferrer">OHDSI Australia</a></li>
-					<li><a href="#" target="_blank" rel="noopener noreferrer">OHDSI Americas</a></li>
+					<li><span style="color: var(--medium-gray);">OHDSI Asia (Coming Soon)</span></li>
+					<li><span style="color: var(--medium-gray);">OHDSI Australia (Coming Soon)</span></li>
+					<li><span style="color: var(--medium-gray);">OHDSI Americas (Coming Soon)</span></li>
 				</ul>
 			</div>
 			
 			<div class="footer-section">
 				<h4>Connect</h4>
 				<div class="social-links">
-					<a href="#" target="_blank" rel="noopener noreferrer"><i class="fab fa-twitter"></i></a>
-					<a href="#" target="_blank" rel="noopener noreferrer"><i class="fab fa-linkedin"></i></a>
-					<a href="#" target="_blank" rel="noopener noreferrer"><i class="fab fa-youtube"></i></a>
-					<a href="#" target="_blank" rel="noopener noreferrer"><i class="fab fa-github"></i></a>
+					<a href="https://twitter.com/OHDSI" target="_blank" rel="noopener noreferrer" aria-label="Follow OHDSI on Twitter"><i class="fab fa-twitter"></i></a>
+					<a href="https://www.linkedin.com/company/ohdsi" target="_blank" rel="noopener noreferrer" aria-label="Connect with OHDSI on LinkedIn"><i class="fab fa-linkedin"></i></a>
+					<a href="https://www.youtube.com/channel/UCjLB7bqNhHXRqmL0KOLe1Aw" target="_blank" rel="noopener noreferrer" aria-label="Subscribe to OHDSI YouTube channel"><i class="fab fa-youtube"></i></a>
+					<a href="https://github.com/OHDSI" target="_blank" rel="noopener noreferrer" aria-label="View OHDSI projects on GitHub"><i class="fab fa-github"></i></a>
 				</div>
 			</div>
 		</div>
