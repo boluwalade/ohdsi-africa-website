@@ -1,228 +1,286 @@
 <script lang="ts">
-	let formData = {
-		firstName: '',
-		lastName: '',
-		email: '',
-		organization: '',
-		country: '',
-		subject: '',
-		message: '',
-		newsletter: false,
-		privacy: false
-	};
+	let isSubmitting = false;
+	let isSubmitted = false;
+	let error = '';
 
-	function handleSubmit(event: Event) {
+	async function handleSubmit(event: Event) {
 		event.preventDefault();
-		
-		// Basic validation
-		if (!formData.firstName || !formData.lastName || !formData.email || !formData.message || !formData.subject) {
-			alert('Please fill in all required fields.');
-			return;
+		isSubmitting = true;
+		error = '';
+
+		const form = event.target as HTMLFormElement;
+		const formData = new FormData(form);
+
+		try {
+			const response = await fetch('/', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+				body: new URLSearchParams(formData as any).toString()
+			});
+
+			if (response.ok) {
+				isSubmitted = true;
+				form.reset();
+			} else {
+				throw new Error('Form submission failed');
+			}
+		} catch (err) {
+			error = 'There was an error sending your message. Please try again.';
+		} finally {
+			isSubmitting = false;
 		}
-		
-		if (!formData.privacy) {
-			alert('Please agree to the privacy policy.');
-			return;
-		}
-		
-		// Simulate form submission
-		alert('Thank you for your message! We will get back to you soon.');
-		
-		// Reset form
-		formData = {
-			firstName: '',
-			lastName: '',
-			email: '',
-			organization: '',
-			country: '',
-			subject: '',
-			message: '',
-			newsletter: false,
-			privacy: false
-		};
+	}
+
+	function resetForm() {
+		isSubmitted = false;
+		error = '';
 	}
 </script>
 
 <h2>Send us a Message</h2>
-<form on:submit={handleSubmit} class="contact-form">
-	<div class="form-row">
-		<div class="form-group">
-			<label for="firstName">First Name *</label>
-			<input type="text" id="firstName" bind:value={formData.firstName} required>
+
+{#if isSubmitted}
+	<div class="success-message">
+		<i class="fas fa-check-circle"></i>
+		<h3>Message Sent Successfully!</h3>
+		<p>Thank you for your message. We will get back to you soon.</p>
+		<button on:click={resetForm} class="btn btn-secondary">Send Another Message</button>
+	</div>
+{:else}
+	<form 
+		on:submit={handleSubmit} 
+		class="contact-form"
+		name="contact"
+		method="POST"
+		data-netlify="true"
+		netlify-honeypot="bot-field"
+	>
+		<!-- Hidden fields for Netlify -->
+		<input type="hidden" name="form-name" value="contact" />
+		<div style="display: none;">
+			<label>
+				Don't fill this out if you're human: 
+				<input name="bot-field" />
+			</label>
 		</div>
+
+		{#if error}
+			<div class="error-message">
+				<i class="fas fa-exclamation-triangle"></i>
+				{error}
+			</div>
+		{/if}
+
 		<div class="form-group">
-			<label for="lastName">Last Name *</label>
-			<input type="text" id="lastName" bind:value={formData.lastName} required>
+			<label for="name">Name *</label>
+			<input 
+				type="text" 
+				id="name" 
+				name="name"
+				required 
+				placeholder="Your full name"
+				disabled={isSubmitting}
+			/>
 		</div>
-	</div>
-	
-	<div class="form-group">
-		<label for="email">Email Address *</label>
-		<input type="email" id="email" bind:value={formData.email} required>
-	</div>
-	
-	<div class="form-group">
-		<label for="organization">Organization/Institution</label>
-		<input type="text" id="organization" bind:value={formData.organization} placeholder="University, Hospital, Research Institute, etc.">
-	</div>
-	
-	<div class="form-group">
-		<label for="country">Country</label>
-		<select id="country" bind:value={formData.country}>
-			<option value="">Select your country</option>
-			<option value="Algeria">Algeria</option>
-			<option value="Angola">Angola</option>
-			<option value="Benin">Benin</option>
-			<option value="Botswana">Botswana</option>
-			<option value="Burkina Faso">Burkina Faso</option>
-			<option value="Cameroon">Cameroon</option>
-			<option value="Egypt">Egypt</option>
-			<option value="Ethiopia">Ethiopia</option>
-			<option value="Ghana">Ghana</option>
-			<option value="Kenya">Kenya</option>
-			<option value="Morocco">Morocco</option>
-			<option value="Nigeria">Nigeria</option>
-			<option value="Rwanda">Rwanda</option>
-			<option value="Senegal">Senegal</option>
-			<option value="South Africa">South Africa</option>
-			<option value="Tanzania">Tanzania</option>
-			<option value="Tunisia">Tunisia</option>
-			<option value="Uganda">Uganda</option>
-			<option value="Zambia">Zambia</option>
-			<option value="Zimbabwe">Zimbabwe</option>
-			<option value="Other">Other</option>
-		</select>
-	</div>
-	
-	<div class="form-group">
-		<label for="subject">Subject *</label>
-		<select id="subject" bind:value={formData.subject} required>
-			<option value="">Select a topic</option>
-			<option value="General Inquiry">General Inquiry</option>
-			<option value="Joining OHDSI Africa">Joining OHDSI Africa</option>
-			<option value="Technical Support">Technical Support</option>
-			<option value="OMOP CDM Implementation">OMOP CDM Implementation</option>
-			<option value="Training & Education">Training & Education</option>
-			<option value="Research Collaboration">Research Collaboration</option>
-			<option value="Partnership Opportunities">Partnership Opportunities</option>
-			<option value="Funding Information">Funding Information</option>
-			<option value="Event Inquiries">Event Inquiries</option>
-			<option value="Other">Other</option>
-		</select>
-	</div>
-	
-	<div class="form-group">
-		<label for="message">Message *</label>
-		<textarea id="message" bind:value={formData.message} rows="6" required placeholder="Please provide details about your inquiry or how we can help you..."></textarea>
-	</div>
-	
-	<div class="form-group checkbox-group">
-		<label class="checkbox-label">
-			<input type="checkbox" bind:checked={formData.newsletter}>
-			I would like to receive updates about OHDSI Africa activities and events
-		</label>
-	</div>
-	
-	<div class="form-group checkbox-group">
-		<label class="checkbox-label">
-			<input type="checkbox" bind:checked={formData.privacy} required>
-			I agree to the <a href="#" target="_blank" rel="noopener noreferrer">Privacy Policy</a> and consent to my data being processed for the purpose of this inquiry *
-		</label>
-	</div>
-	
-	<button type="submit" class="btn btn-primary">
-		<i class="fas fa-paper-plane"></i> Send Message
-	</button>
-</form>
+
+		<div class="form-group">
+			<label for="email">Email *</label>
+			<input 
+				type="email" 
+				id="email" 
+				name="email"
+				required 
+				placeholder="your.email@example.com"
+				disabled={isSubmitting}
+			/>
+		</div>
+
+		<div class="form-group">
+			<label for="subject">Subject *</label>
+			<input 
+				type="text" 
+				id="subject" 
+				name="subject"
+				required 
+				placeholder="What is your message about?"
+				disabled={isSubmitting}
+			/>
+		</div>
+
+		<div class="form-group">
+			<label for="message">Message *</label>
+			<textarea 
+				id="message" 
+				name="message"
+				required 
+				placeholder="Your message to OHDSI Africa..."
+				rows="6"
+				disabled={isSubmitting}
+			></textarea>
+		</div>
+
+		<button type="submit" class="submit-btn" disabled={isSubmitting}>
+			{#if isSubmitting}
+				<i class="fas fa-spinner fa-spin"></i>
+				Sending...
+			{:else}
+				<i class="fas fa-paper-plane"></i>
+				Send Email
+			{/if}
+		</button>
+	</form>
+{/if}
 
 <style>
-	h2 {
-		font-size: var(--font-size-xl);
-		font-weight: 600;
-		color: var(--primary-blue);
-		margin-bottom: var(--spacing-xl);
-	}
-
 	.contact-form {
-		display: flex;
-		flex-direction: column;
-		gap: var(--spacing-lg);
-	}
-
-	.form-row {
-		display: grid;
-		grid-template-columns: 1fr 1fr;
-		gap: var(--spacing-lg);
+		max-width: 600px;
+		margin: 0 auto;
 	}
 
 	.form-group {
-		display: flex;
-		flex-direction: column;
-		gap: var(--spacing-sm);
+		margin-bottom: var(--spacing-lg);
 	}
 
-	.form-group label {
-		font-weight: 500;
-		color: var(--text-dark);
+	label {
+		display: block;
+		margin-bottom: var(--spacing-sm);
+		font-weight: 600;
+		color: var(--primary-blue);
 	}
 
-	.form-group input,
-	.form-group select,
-	.form-group textarea {
+	input,
+	textarea {
+		width: 100%;
 		padding: var(--spacing-md);
-		border: 2px solid var(--light-blue);
+		border: 2px solid var(--light-gray);
 		border-radius: var(--radius-md);
-		font-family: var(--font-family);
 		font-size: var(--font-size-base);
+		font-family: var(--font-family);
 		transition: border-color 0.3s ease;
 	}
 
-	.form-group input:focus,
-	.form-group select:focus,
-	.form-group textarea:focus {
+	input:focus,
+	textarea:focus {
 		outline: none;
 		border-color: var(--secondary-blue);
+		box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
 	}
 
-	.form-group textarea {
+	input:disabled,
+	textarea:disabled {
+		background-color: var(--light-gray);
+		opacity: 0.7;
+		cursor: not-allowed;
+	}
+
+	textarea {
 		resize: vertical;
 		min-height: 120px;
 	}
 
-	.checkbox-group {
-		flex-direction: row;
-		align-items: flex-start;
-		gap: var(--spacing-sm);
-	}
-
-	.checkbox-label {
-		display: flex;
-		align-items: flex-start;
-		gap: var(--spacing-sm);
+	.submit-btn {
+		background: linear-gradient(135deg, var(--primary-blue), var(--secondary-blue));
+		color: var(--white);
+		border: none;
+		padding: var(--spacing-md) var(--spacing-xl);
+		border-radius: var(--radius-lg);
+		font-size: var(--font-size-lg);
+		font-weight: 600;
 		cursor: pointer;
-		font-size: var(--font-size-sm);
-		line-height: 1.5;
+		transition: all 0.3s ease;
+		display: flex;
+		align-items: center;
+		gap: var(--spacing-sm);
+		margin: var(--spacing-xl) auto 0;
 	}
 
-	.checkbox-label input[type="checkbox"] {
-		margin: 0;
-		width: 18px;
-		height: 18px;
-		accent-color: var(--primary-blue);
+	.submit-btn:hover:not(:disabled) {
+		transform: translateY(-2px);
+		box-shadow: var(--shadow-lg);
 	}
 
-	.checkbox-label a {
+	.submit-btn:active {
+		transform: translateY(0);
+	}
+
+	.submit-btn:disabled {
+		opacity: 0.7;
+		cursor: not-allowed;
+		transform: none;
+	}
+
+	.success-message {
+		text-align: center;
+		padding: var(--spacing-2xl);
+		background: linear-gradient(135deg, var(--light-blue), var(--white));
+		border-radius: var(--radius-lg);
+		border: 2px solid var(--success);
+	}
+
+	.success-message i {
+		font-size: var(--font-size-3xl);
+		color: var(--success);
+		margin-bottom: var(--spacing-lg);
+	}
+
+	.success-message h3 {
 		color: var(--primary-blue);
-		text-decoration: none;
+		margin-bottom: var(--spacing-md);
 	}
 
-	.checkbox-label a:hover {
-		text-decoration: underline;
+	.success-message p {
+		margin-bottom: var(--spacing-xl);
+		color: var(--text-dark);
+	}
+
+	.error-message {
+		background-color: #fef2f2;
+		border: 1px solid var(--error);
+		color: var(--error);
+		padding: var(--spacing-md);
+		border-radius: var(--radius-md);
+		margin-bottom: var(--spacing-lg);
+		display: flex;
+		align-items: center;
+		gap: var(--spacing-sm);
+	}
+
+	.btn {
+		display: inline-flex;
+		align-items: center;
+		gap: var(--spacing-sm);
+		padding: var(--spacing-md) var(--spacing-xl);
+		border-radius: var(--radius-lg);
+		text-decoration: none;
+		font-weight: 600;
+		font-size: var(--font-size-base);
+		transition: all 0.3s ease;
+		border: 2px solid transparent;
+		cursor: pointer;
+		background: none;
+	}
+
+	.btn-secondary {
+		background-color: transparent;
+		color: var(--primary-blue);
+		border-color: var(--primary-blue);
+	}
+
+	.btn-secondary:hover {
+		background-color: var(--primary-blue);
+		color: var(--white);
+		transform: translateY(-2px);
+		box-shadow: var(--shadow-lg);
 	}
 
 	@media (max-width: 768px) {
-		.form-row {
-			grid-template-columns: 1fr;
+		.contact-form {
+			max-width: 100%;
+		}
+		
+		.submit-btn {
+			width: 100%;
+			justify-content: center;
 		}
 	}
 </style>
