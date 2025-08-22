@@ -4,11 +4,27 @@
 	let error = '';
 
 	async function handleSubmit(event: Event) {
+		const form = event.target as HTMLFormElement;
+		
+		// For development, show success immediately
+		if (import.meta.env.DEV) {
+			event.preventDefault();
+			isSubmitting = true;
+			
+			// Simulate network delay
+			setTimeout(() => {
+				isSubmitted = true;
+				isSubmitting = false;
+				form.reset();
+			}, 1000);
+			return;
+		}
+
+		// For production with Netlify
 		event.preventDefault();
 		isSubmitting = true;
 		error = '';
 
-		const form = event.target as HTMLFormElement;
 		const formData = new FormData(form);
 
 		try {
