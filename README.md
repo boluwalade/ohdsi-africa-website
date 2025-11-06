@@ -4,7 +4,7 @@ A modern, responsive website for the OHDSI Africa Chapter built with SvelteKit a
 
 ## Features
 
-- 🎨 **Modern Design** - Clean, professional design inspired by OHDSI Europe
+- 🎨 **Modern Design** - Clean, professional design
 - 📱 **Responsive** - Works perfectly on all devices
 - ⚡ **Fast** - Built with SvelteKit for optimal performance
 - 🎯 **TypeScript** - Type-safe development
