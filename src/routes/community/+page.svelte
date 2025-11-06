@@ -8,7 +8,7 @@
 </svelte:head>
 
 <PageHeader 
-	title="👥 Join Our Community" 
+	title="Join Our Community" 
 	subtitle="Connect with researchers, clinicians, and data scientists across Africa"
 />
 
