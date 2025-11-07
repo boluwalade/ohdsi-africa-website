@@ -40,8 +40,7 @@
 		{ id: 'saura', initials: 'AS', name: 'Dr. Anna Saura Lázaro', title: 'Senior Researcher, Clinical Epidemiology and RWE, University of Oxford', image: '/speakers/anna-saura-lazaro.webp' },
 		{ id: 'belmans', initials: 'LB', name: 'Dr. Luc Belmans', title: 'CEO, Medaman', image: '/speakers/luc-belmans.jpg' },
 		{ id: 'kanyike', initials: 'FK', name: 'Dr. Francis Kanyike', title: 'Public Health Specialist, Joint Clinical Research Centre (JCRC), Uganda', image: '/speakers/francis-kanyike.jpg' },
-		{ id: 'descamps', initials: 'FD', name: 'Freija Descamps', title: 'Managing Partner, edenceHealth NV', image: '/speakers/freija-descamps.jpg' },
-		{ id: 'nizeyimana', initials: 'PN', name: 'Pacifique Nizeyimana', title: 'Rwanda Biomedical Centre (RBC)', image: '/speakers/pacifique-nizeyimana.jpg' }
+		{ id: 'descamps', initials: 'FD', name: 'Freija Descamps', title: 'Managing Partner, edenceHealth NV', image: '/speakers/freija-descamps.jpg' }
 	];
 	
 	$: totalSlides = Math.ceil(speakers.length / speakersPerSlide);
