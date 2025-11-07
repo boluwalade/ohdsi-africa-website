@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
+	import { browser } from '$app/environment';
 	import PageHeader from '$lib/components/PageHeader.svelte';
 	
 	let expandedSection: string | null = null;
@@ -40,8 +41,7 @@
 		{ id: 'saura', initials: 'AS', name: 'Dr. Anna Saura Lázaro', title: 'Senior Researcher, Clinical Epidemiology and RWE, University of Oxford', image: '/speakers/anna-saura-lazaro.webp' },
 		{ id: 'belmans', initials: 'LB', name: 'Dr. Luc Belmans', title: 'CEO, Medaman', image: '/speakers/luc-belmans.jpg' },
 		{ id: 'kanyike', initials: 'FK', name: 'Dr. Francis Kanyike', title: 'Public Health Specialist, Joint Clinical Research Centre (JCRC), Uganda', image: '/speakers/francis-kanyike.jpg' },
-		{ id: 'descamps', initials: 'FD', name: 'Freija Descamps', title: 'Managing Partner, edenceHealth NV', image: '/speakers/freija-descamps.jpg' },
-		{ id: 'nizeyimana', initials: 'PN', name: 'Pacifique Nizeyimana', title: 'Rwanda Biomedical Centre (RBC)', image: '/speakers/pacifique-nizeyimana.jpg' }
+		{ id: 'descamps', initials: 'FD', name: 'Freija Descamps', title: 'Managing Partner, edenceHealth NV', image: '/speakers/freija-descamps.jpg' }
 	];
 	
 	$: totalSlides = Math.ceil(speakers.length / speakersPerSlide);
@@ -57,18 +57,22 @@
 		if (expandedSpeaker === speaker) {
 			// Closing modal - return focus to trigger
 			expandedSpeaker = null;
-			if (previousFocusElement) {
+			if (previousFocusElement && browser) {
 				setTimeout(() => previousFocusElement?.focus(), 100);
 				previousFocusElement = null;
 			}
 		} else {
 			// Opening modal - save focus and focus close button
-			previousFocusElement = document.activeElement as HTMLElement;
+			if (browser) {
+				previousFocusElement = document.activeElement as HTMLElement;
+			}
 			expandedSpeaker = speaker;
-			setTimeout(() => {
-				const closeBtn = document.querySelector('.close-modal-btn') as HTMLElement;
-				closeBtn?.focus();
-			}, 100);
+			if (browser) {
+				setTimeout(() => {
+					const closeBtn = document.querySelector('.close-modal-btn') as HTMLElement;
+					closeBtn?.focus();
+				}, 100);
+			}
 		}
 	}
 
@@ -103,6 +107,7 @@
 	}
 
 	function scrollToSlide(index: number) {
+		if (!browser) return;
 		const slider = document.querySelector('.speakers-slider');
 		const grids = slider?.querySelectorAll('.speakers-grid');
 		if (grids && grids[index]) {
@@ -110,11 +115,13 @@
 		}
 	}
 
-	// Lock body scroll when modal is open
-	$: if (expandedSpeaker) {
-		document.body.style.overflow = 'hidden';
-	} else {
-		document.body.style.overflow = '';
+	// Lock body scroll when modal is open (browser only)
+	$: if (browser) {
+		if (expandedSpeaker) {
+			document.body.style.overflow = 'hidden';
+		} else {
+			document.body.style.overflow = '';
+		}
 	}
 </script>
 
@@ -2254,11 +2261,28 @@
 					</div>
 					{#if expandedVenue === 'venues'}
 						<div class="venue-accordion-content">
-							<p><strong>Tutorial Day (November 10):</strong></p>
-							<p>Joint Clinical Research Centre (JCRC), Kampala, Uganda</p>
+							<p><strong>Pre-Symposium Training (November 10, 2025)</strong></p>
+							<p><strong>Venue:</strong> Joint Clinical Research Centre (JCRC) Offices, Lubowa</p>
+							<p><strong>Time:</strong> 8:30 AM – 5:00 PM</p>
+							<p><strong>Facilities:</strong></p>
+							<ul>
+								<li>Wi-Fi available throughout</li>
+								<li>Tea and lunch provided on-site</li>
+								<li>Shuttle transportation arranged from Mestil Hotel for registered guests</li>
+							</ul>
 							
-							<p style="margin-top: var(--spacing-md);"><strong>Main Conference (November 11-12):</strong></p>
-							<p>Mestil Hotel, Kampala, Uganda</p>
+							<p style="margin-top: var(--spacing-lg);"><strong>Main Symposium (November 11–12, 2025)</strong></p>
+							<p><strong>Venue:</strong> Mestil Hotel & Residences, Nsambya, Kampala</p>
+							<p><strong>Time:</strong> 8:30 AM – 4:30 PM (both days)</p>
+							<p><strong>Facilities:</strong></p>
+							<ul>
+								<li>Plenary and breakout session rooms</li>
+								<li>Exhibition area for partners and sponsors</li>
+								<li>Complimentary tea, coffee, and lunch</li>
+								<li>Networking dinner (details to follow)</li>
+							</ul>
+							
+							<p style="margin-top: var(--spacing-md);"><strong>Note:</strong> JCRC is in Lubowa, along Entebbe Road, about 20-45 minutes from central Kampala hotels (depending on traffic).</p>
 						</div>
 					{/if}
 				</div>
@@ -2271,14 +2295,38 @@
 					</div>
 					{#if expandedVenue === 'accommodations'}
 						<div class="venue-accordion-content">
-							<p>Hotel rooms at Mestil Hotel may be reserved using the special booking code:</p>
+							<p><strong>Recommended Hotel: Mestil Hotel & Residences</strong></p>
+							<p>Participants staying at Mestil enjoy proximity to the main symposium venue, high-speed internet, gym access, and breakfast.</p>
 							<p><strong>Booking Code:</strong> JCRC</p>
 							<p>
 								<strong>Booking Link:</strong> 
 								<a href="https://direct-book.com/properties/MestilDIRECT?promotion_code=JCRC25" target="_blank" rel="noopener noreferrer">
-									Book Now
+									Book Now at Mestil Hotel
 								</a>
 							</p>
+							
+							<p style="margin-top: var(--spacing-lg);"><strong>Alternative Hotels:</strong></p>
+							
+							<p style="margin-top: var(--spacing-md);"><strong>Luxury / VIP Options:</strong></p>
+							<ul>
+								<li><strong>Kampala Serena Hotel</strong> - 5-star, very comfortable, central, excellent service</li>
+								<li><strong>Sheraton Kampala Hotel (Marriott)</strong> - Upscale, international standard, business-friendly</li>
+							</ul>
+							
+							<p style="margin-top: var(--spacing-md);"><strong>Mid-range / Business-Friendly:</strong></p>
+							<ul>
+								<li><strong>Speke Hotel</strong> - Historic and central, reliable, close to major city spots</li>
+								<li><strong>Fairway Hotel</strong> - Convenient location</li>
+								<li><strong>Hotel Africana</strong> - Good facilities</li>
+								<li><strong>Hilton Garden Inn / Protea Hotel / Latitude 0 Degrees</strong> - Modern hotels offering good Wi-Fi and airport transfers</li>
+							</ul>
+							
+							<p style="margin-top: var(--spacing-md);"><strong>Budget / Long-Stay Options:</strong></p>
+							<ul>
+								<li><strong>Arcadia Suites / Kampala Boulevard Suites</strong> - Serviced apartments, affordable</li>
+							</ul>
+							
+							<p style="margin-top: var(--spacing-md);"><strong>Booking Tips:</strong> Prioritize hotels offering airport transfers, early breakfast, and strong Wi-Fi. Consider group booking arrangements for convenience and cost savings.</p>
 						</div>
 					{/if}
 				</div>
@@ -2291,13 +2339,25 @@
 					</div>
 					{#if expandedVenue === 'transportation'}
 						<div class="venue-accordion-content">
+							<p><strong>Airport Transportation</strong></p>
 							<p>
-								Kampala is serviced by Jomo Kenyatta International Airport. The distance from the airport to the venues is approximately 28 km.
+								Kampala is served by <strong>Entebbe International Airport</strong>, located approximately 45 km from the city center and the symposium venues.
 							</p>
 							<p>
-								Taxis are available at the airport; please use an official airport taxi. The journey takes approximately 35 minutes depending on traffic. Uber is easily accessible within the airport and for moving around Kampala.
+								Taxis are available at the airport—please use official airport taxis, which can be arranged at the airport help desk upon arrival. The journey to Kampala typically takes about 45–60 minutes, depending on traffic.
 							</p>
-							<p style="margin-top: var(--spacing-md);"><strong>Travel Tip:</strong> Agree on taxi prices before departing.</p>
+							
+							<p style="margin-top: var(--spacing-lg);"><strong>Symposium Shuttle Service</strong></p>
+							<p>
+								Shuttle service between Mestil Hotel and JCRC will be provided during training day (November 10) for registered guests staying at Mestil Hotel.
+							</p>
+							
+							<p style="margin-top: var(--spacing-lg);"><strong>Ride-Hailing Apps</strong></p>
+							<p>
+								<a href="https://play.google.com/store/apps/details?id=com.safeboda.passenger&hl=en" target="_blank" rel="noopener noreferrer">Safe Boda</a>, <a href="https://play.google.com/store/apps/details?id=com.faras.rider&hl=en" target="_blank" rel="noopener noreferrer">Faras</a>, and Uber are widely available in Kampala for convenient transportation.
+							</p>
+							
+							<p style="margin-top: var(--spacing-md);"><strong>Travel Tip:</strong> Confirm taxi fares before starting your journey.</p>
 						</div>
 					{/if}
 				</div>
@@ -2310,13 +2370,56 @@
 					</div>
 					{#if expandedVenue === 'general'}
 						<div class="venue-accordion-content">
+							<p><strong>Languages:</strong> English, Luganda</p>
+							
+							<p style="margin-top: var(--spacing-md);"><strong>Currency:</strong> Ugandan Shilling (UGX)</p>
 							<ul>
-								<li><strong>Language:</strong> English</li>
-								<li><strong>Currency:</strong> Ugandan Shilling (UGX). Major credit cards accepted. ATMs available in shopping malls.</li>
-								<li><strong>Voltage:</strong> 220-240 volts with 3 square pin plugs</li>
-								<li><strong>Weather in November:</strong> Average temperature 18-23°C</li>
-								<li><strong>Time Zone:</strong> GMT+3</li>
+								<li>US Dollar: 1 USD = 3,486 UGX (approx.)</li>
+								<li>Euro: 1 EUR = 4,029 UGX (approx.)</li>
+								<li>British Pound: 1 GBP = 4,572 UGX (approx.)</li>
+								<li>Major credit cards accepted. ATMs available in shopping malls.</li>
 							</ul>
+							
+							<p style="margin-top: var(--spacing-md);"><strong>Time Zone:</strong> East Africa Time (EAT, UTC+3)</p>
+							
+							<p style="margin-top: var(--spacing-lg);"><strong>Weather (November)</strong></p>
+							<ul>
+								<li>Expect frequent afternoon or evening showers, sometimes heavy but brief</li>
+								<li>Mornings are often clear, making them best for outdoor travel or photography</li>
+								<li>Temperatures remain pleasant - usually 21-27°C</li>
+								<li>Carry a light raincoat or umbrella</li>
+							</ul>
+							
+							<p style="margin-top: var(--spacing-lg);"><strong>Power & Electricity</strong></p>
+							<p>
+								Uganda uses Type G (three rectangular pins) and Type C (two round pins) power sockets. 
+								The electricity supply operates at 230V and 50Hz. Most hotels and venues have universal sockets 
+								that fit both plug types. International participants are advised to bring a universal travel adapter 
+								to ensure compatibility with their devices.
+							</p>
+							
+							<p style="margin-top: var(--spacing-lg);"><strong>Health & Safety</strong></p>
+							<p>Uganda requires a yellow fever vaccination certificate for international travelers. Ensure valid travel insurance and follow health advisories.</p>
+							
+							<p style="margin-top: var(--spacing-md);"><strong>Recommended Hospitals:</strong></p>
+							<ul>
+								<li><strong>St. Francis Hospital Nsambya</strong> - +256 41 4267012, +256 41 4266998</li>
+								<li><strong>International Hospital Kampala (IHK)</strong> - +256 771 801902</li>
+								<li><strong>Kibuli Muslim Hospital</strong> - +256 41 4236476/7</li>
+								<li><strong>Nakasero Hospital</strong> - +256 393 224 681</li>
+							</ul>
+							
+							<p style="margin-top: var(--spacing-lg);"><strong>Tours & Cultural Experiences (Optional)</strong></p>
+							<p>Participants interested in exploring Uganda can consider:</p>
+							<ul>
+								<li><strong>Kampala City Tour:</strong> Visit the Uganda Museum, Kasubi Tombs, and local craft markets</li>
+								<li><strong>Source of the Nile (Jinja) Tour:</strong> Day trip to Jinja, Uganda's adventure capital</li>
+								<li><strong>Wildlife Excursions:</strong> Short safaris to Lake Mburo or Murchison Falls National Park can be arranged through recommended tour operators</li>
+							</ul>
+							
+							<p style="margin-top: var(--spacing-lg);"><strong>Contact for Logistical Inquiries:</strong></p>
+							<p>For logistical inquiries or special requests, contact: <strong>+256 782 967063</strong></p>
+							
 							<p style="margin-top: var(--spacing-lg);">
 								For non-OHDSI-related information, please visit the <a href="https://jcrc.org.ug" target="_blank" rel="noopener noreferrer">JCRC website</a>.
 							</p>
