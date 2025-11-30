@@ -10,6 +10,29 @@
 	const speakersPerSlide = 6;
 	let previousFocusElement: HTMLElement | null = null;
 	
+	// Gallery state
+	let currentGallerySlide = 0;
+	const photosPerSlide = 6;
+	let lightboxPhoto: { src: string; caption: string } | null = null;
+	
+	// Gallery photos array - Add your symposium photos here
+	const galleryPhotos = [
+		{ src: '/gallery/symposium-1.jpg', caption: 'Opening Ceremony - Welcome Address' },
+		{ src: '/gallery/symposium-2.jpg', caption: 'Keynote Presentation on OMOP CDM' },
+		{ src: '/gallery/symposium-3.jpg', caption: 'Workshop Session at JCRC' },
+		{ src: '/gallery/symposium-4.jpg', caption: 'Panel Discussion - African Health Data' },
+		{ src: '/gallery/symposium-5.jpg', caption: 'Networking Break' },
+		{ src: '/gallery/symposium-6.jpg', caption: 'Poster Presentations' },
+		{ src: '/gallery/symposium-7.jpg', caption: 'Collaborative Coding Session' },
+		{ src: '/gallery/symposium-8.jpg', caption: 'Group Photo at Mestil Hotel' },
+		// Add more photos as needed
+	];
+	
+	$: totalGallerySlides = Math.ceil(galleryPhotos.length / photosPerSlide);
+	$: gallerySlides = Array.from({ length: totalGallerySlides }, (_, i) => 
+		galleryPhotos.slice(i * photosPerSlide, (i + 1) * photosPerSlide)
+	);
+	
 	// Speaker data array
 	const speakers = [
 		{ id: 'ryan', initials: 'PR', name: 'Dr. Patrick Ryan', title: 'VP of Observational Health Data Analytics, Janssen R&D; OHDSI Founding Collaborator', image: '/speakers/patrick-ryan.jpg' },
@@ -76,10 +99,14 @@
 		}
 	}
 
-	// Handle Escape key to close modal
+	// Handle Escape key to close modal and lightbox
 	function handleKeydown(event: KeyboardEvent) {
-		if (event.key === 'Escape' && expandedSpeaker) {
-			toggleSpeaker(expandedSpeaker);
+		if (event.key === 'Escape') {
+			if (lightboxPhoto) {
+				closeLightbox();
+			} else if (expandedSpeaker) {
+				toggleSpeaker(expandedSpeaker);
+			}
 		}
 	}
 
@@ -112,6 +139,38 @@
 		const grids = slider?.querySelectorAll('.speakers-grid');
 		if (grids && grids[index]) {
 			grids[index].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'start' });
+		}
+	}
+	
+	// Gallery navigation functions
+	function nextGallerySlide() {
+		if (currentGallerySlide < totalGallerySlides - 1) {
+			currentGallerySlide++;
+		}
+	}
+	
+	function prevGallerySlide() {
+		if (currentGallerySlide > 0) {
+			currentGallerySlide--;
+		}
+	}
+	
+	function goToGallerySlide(index: number) {
+		currentGallerySlide = index;
+	}
+	
+	// Lightbox functions
+	function openLightbox(photo: { src: string; caption: string }) {
+		lightboxPhoto = photo;
+		if (browser) {
+			document.body.style.overflow = 'hidden';
+		}
+	}
+	
+	function closeLightbox() {
+		lightboxPhoto = null;
+		if (browser) {
+			document.body.style.overflow = '';
 		}
 	}
 
@@ -206,6 +265,279 @@
 		line-height: 1.8;
 		margin-bottom: var(--spacing-lg);
 		color: var(--text-dark);
+	}
+
+	/* Video Section */
+	.video-section {
+		max-width: 1200px;
+		margin: 0 auto;
+		padding: 0 var(--spacing-xl);
+		text-align: center;
+	}
+
+	.video-wrapper {
+		position: relative;
+		width: 100%;
+		max-width: 900px;
+		margin: 0 auto;
+		padding-bottom: 56.25%; /* 16:9 aspect ratio */
+		height: 0;
+		overflow: hidden;
+		border-radius: var(--radius-lg);
+		box-shadow: 0 8px 24px rgba(0, 49, 66, 0.15);
+		background: var(--dark-blue);
+	}
+
+	.video-wrapper iframe {
+		position: absolute;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		border: none;
+		border-radius: var(--radius-lg);
+	}
+
+	.video-intro {
+		font-size: var(--font-size-base);
+		color: var(--medium-gray);
+		max-width: 800px;
+		margin: 0 auto var(--spacing-xl);
+		line-height: 1.6;
+	}
+
+	/* Gallery Section */
+	.gallery-section {
+		max-width: 1200px;
+		margin: 0 auto;
+		padding: 0 var(--spacing-xl);
+	}
+
+	.gallery-intro {
+		font-size: var(--font-size-base);
+		color: var(--medium-gray);
+		max-width: 800px;
+		margin: 0 auto var(--spacing-2xl);
+		line-height: 1.6;
+		text-align: center;
+	}
+
+	.gallery-carousel {
+		position: relative;
+		margin-bottom: var(--spacing-xl);
+	}
+
+	.gallery-slider {
+		overflow: hidden;
+		position: relative;
+		border-radius: var(--radius-lg);
+	}
+
+	.gallery-grid {
+		display: none;
+		grid-template-columns: repeat(3, 1fr);
+		gap: var(--spacing-lg);
+		animation: fadeIn 0.5s ease-in-out;
+	}
+
+	.gallery-grid.active {
+		display: grid;
+	}
+
+	.gallery-item {
+		position: relative;
+		aspect-ratio: 4/3;
+		overflow: hidden;
+		border-radius: var(--radius-md);
+		cursor: pointer;
+		transition: transform 0.3s ease, box-shadow 0.3s ease;
+		background: var(--light-gray);
+	}
+
+	.gallery-item:hover {
+		transform: translateY(-4px);
+		box-shadow: 0 8px 24px rgba(0, 49, 66, 0.2);
+	}
+
+	.gallery-item img {
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+		transition: transform 0.3s ease;
+	}
+
+	.gallery-item:hover img {
+		transform: scale(1.05);
+	}
+
+	.gallery-overlay {
+		position: absolute;
+		bottom: 0;
+		left: 0;
+		right: 0;
+		background: linear-gradient(to top, rgba(0, 49, 66, 0.9) 0%, transparent 100%);
+		color: var(--white);
+		padding: var(--spacing-md);
+		transform: translateY(100%);
+		transition: transform 0.3s ease;
+	}
+
+	.gallery-item:hover .gallery-overlay {
+		transform: translateY(0);
+	}
+
+	.gallery-icon {
+		font-size: var(--font-size-2xl);
+		display: block;
+		text-align: center;
+		margin-bottom: var(--spacing-xs);
+	}
+
+	.gallery-caption {
+		font-size: var(--font-size-sm);
+		text-align: center;
+		margin: 0;
+	}
+
+	.gallery-nav-btn {
+		position: absolute;
+		top: 50%;
+		transform: translateY(-50%);
+		background: var(--primary-blue);
+		color: var(--white);
+		border: none;
+		width: 48px;
+		height: 48px;
+		border-radius: 50%;
+		font-size: var(--font-size-2xl);
+		cursor: pointer;
+		transition: all 0.3s ease;
+		z-index: 10;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		box-shadow: 0 4px 12px rgba(0, 49, 66, 0.2);
+	}
+
+	.gallery-nav-btn:hover:not(:disabled) {
+		background: var(--primary-orange);
+		transform: translateY(-50%) scale(1.1);
+	}
+
+	.gallery-nav-btn:disabled {
+		opacity: 0.3;
+		cursor: not-allowed;
+	}
+
+	.gallery-prev {
+		left: -24px;
+	}
+
+	.gallery-next {
+		right: -24px;
+	}
+
+	.gallery-indicators {
+		display: flex;
+		justify-content: center;
+		gap: var(--spacing-sm);
+		margin-top: var(--spacing-xl);
+	}
+
+	.gallery-indicator {
+		width: 12px;
+		height: 12px;
+		border-radius: 50%;
+		border: 2px solid var(--primary-blue);
+		background: transparent;
+		cursor: pointer;
+		transition: all 0.3s ease;
+	}
+
+	.gallery-indicator.active {
+		background: var(--primary-orange);
+		border-color: var(--primary-orange);
+		transform: scale(1.2);
+	}
+
+	.gallery-indicator:hover {
+		background: var(--light-blue);
+	}
+
+	/* Lightbox */
+	.lightbox-overlay {
+		position: fixed;
+		top: 0;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		background: rgba(0, 0, 0, 0.95);
+		z-index: 10000;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		padding: var(--spacing-xl);
+		animation: fadeIn 0.3s ease-in-out;
+	}
+
+	.lightbox-content {
+		position: relative;
+		max-width: 1200px;
+		max-height: 90vh;
+		background: var(--white);
+		border-radius: var(--radius-lg);
+		overflow: hidden;
+		box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+	}
+
+	.lightbox-content img {
+		display: block;
+		width: 100%;
+		height: auto;
+		max-height: 80vh;
+		object-fit: contain;
+	}
+
+	.lightbox-close {
+		position: absolute;
+		top: var(--spacing-md);
+		right: var(--spacing-md);
+		background: var(--primary-blue);
+		color: var(--white);
+		border: none;
+		width: 44px;
+		height: 44px;
+		border-radius: 50%;
+		font-size: var(--font-size-2xl);
+		cursor: pointer;
+		transition: all 0.3s ease;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		z-index: 1;
+	}
+
+	.lightbox-close:hover {
+		background: var(--primary-orange);
+		transform: rotate(90deg);
+	}
+
+	.lightbox-caption {
+		padding: var(--spacing-lg);
+		text-align: center;
+		font-size: var(--font-size-base);
+		color: var(--text-dark);
+		background: var(--light-gray);
+		margin: 0;
+	}
+
+	@keyframes fadeIn {
+		from {
+			opacity: 0;
+		}
+		to {
+			opacity: 1;
+		}
 	}
 
 	/* OHDSI-style section titles */
@@ -945,10 +1277,34 @@
 	@media (max-width: 768px) {
 		.hero-banner .container,
 		.about-section,
+		.video-section,
+		.gallery-section,
 		.programme-intro,
 		.venue-section,
 		.speakers-intro {
 			padding: 0 var(--spacing-lg);
+		}
+		
+		.gallery-grid {
+			grid-template-columns: repeat(2, 1fr);
+			gap: var(--spacing-md);
+		}
+		
+		.gallery-nav-btn {
+			width: 40px;
+			height: 40px;
+		}
+		
+		.gallery-prev {
+			left: -20px;
+		}
+		
+		.gallery-next {
+			right: -20px;
+		}
+		
+		.lightbox-overlay {
+			padding: var(--spacing-md);
 		}
 
 		.venue-container {
@@ -1058,10 +1414,40 @@
 	@media (max-width: 480px) {
 		.hero-banner .container,
 		.about-section,
+		.video-section,
+		.gallery-section,
 		.programme-intro,
 		.venue-section,
 		.speakers-intro {
 			padding: 0 var(--spacing-md);
+		}
+		
+		.gallery-grid {
+			grid-template-columns: 1fr;
+			gap: var(--spacing-sm);
+		}
+		
+		.gallery-nav-btn {
+			width: 36px;
+			height: 36px;
+			font-size: var(--font-size-xl);
+		}
+		
+		.gallery-prev {
+			left: 0;
+		}
+		
+		.gallery-next {
+			right: 0;
+		}
+		
+		.lightbox-content {
+			max-height: 95vh;
+		}
+		
+		.lightbox-caption {
+			padding: var(--spacing-md);
+			font-size: var(--font-size-sm);
 		}
 
 		.venue-container {
@@ -1236,9 +1622,9 @@
 								<li>Understand the vision, structure, and collaborative nature of OHDSI</li>
 								<li>Recognize the role of the OMOP CDM in harmonizing health data for large-scale analysis</li>
 								<li>Appreciate how OHDSI tools and methods support data-driven healthcare research</li>
-							</ul>
+				</ul>
 							<p><em>Trainers: Michael O, Mui Van Zandt, Cynthia S</em></p>
-						</div>
+			</div>
 
 						<div class="training-module">
 							<h5>2. OMOP CDM and Vocabulary</h5>
@@ -1248,9 +1634,9 @@
 								<li>Understand the key tables and relationships within the OMOP CDM</li>
 								<li>Learn about standard vocabularies (SNOMED, RxNorm, LOINC, etc.) and their role in ensuring data interoperability</li>
 								<li>Gain insights into how local terms and codes are mapped to OMOP standards</li>
-							</ul>
+				</ul>
 							<p><em>Trainers: Sebastian Van Sandijk, Cynthia S, Mui Van Zandt</em></p>
-						</div>
+			</div>
 
 						<div class="training-module">
 							<h5>3. OMOP Conversion Process</h5>
@@ -1260,9 +1646,9 @@
 								<li>Be familiar with the workflow of an OMOP conversion project</li>
 								<li>Identify the main challenges in data mapping and how to address them</li>
 								<li>Understand the tools and resources available to support conversion efforts</li>
-							</ul>
+				</ul>
 							<p><em>Trainers: Rachel O, Freija D., Ousmane D</em></p>
-						</div>
+			</div>
 
 						<div class="training-module">
 							<h5>4. ETL Exercises</h5>
@@ -1274,7 +1660,7 @@
 								<li>Gain practical skills in structuring data to meet OMOP CDM requirements</li>
 							</ul>
 							<p><em>Trainers: Pauline A, Freija D., Reinpeter M</em></p>
-						</div>
+		</div>
 
 						<div class="training-module">
 							<h5>5. Data Quality Dashboard</h5>
@@ -1286,7 +1672,7 @@
 								<li>Appreciate the importance of maintaining high-quality standardized data for research</li>
 							</ul>
 							<p><em>Trainers: Reinpeter M, David A, Sebastian Van Sandijk</em></p>
-						</div>
+		</div>
 
 						<div class="training-module">
 							<h5>6. Evidence Generation via OHDSI Tools</h5>
@@ -1301,7 +1687,7 @@
 						</div>
 					</div>
 				{/if}
-			</div>
+		</div>
 
 			<!-- Main Conference Days -->
 			<div class="session-card">
@@ -1331,7 +1717,7 @@
 						</p>
 					</div>
 				{/if}
-			</div>
+		</div>
 
 			<!-- Collaborator Showcase -->
 			<div class="session-card">
@@ -1353,18 +1739,18 @@
 						
 						<p><strong>POSTER:</strong> A poster-board presentation with a static display summary of your latest research. Poster measurements should be horizontal-orientation with a maximum size of 48 inches long × 36 inches high. Please create a thin fabric or paper-type poster (no foam core).</p>
 						
-						<p><strong>LIGHTNING TALK:</strong> A 6-minute podium presentation to verbally share your story with the community.</p>
+				<p><strong>LIGHTNING TALK:</strong> A 6-minute podium presentation to verbally share your story with the community.</p>
 						
 						<h4 style="color: var(--primary-blue); margin-top: var(--spacing-xl); margin-bottom: var(--spacing-md); font-weight: 600;">Topics</h4>
 						<p>Submissions should align with at least one of OHDSI's strategic areas:</p>
 						<ul>
-							<li>Observational data standards and management</li>
-							<li>Methodological research</li>
-							<li>Open-source analytics development</li>
-							<li>Clinical applications</li>
-							<li>Community development</li>
+					<li>Observational data standards and management</li>
+					<li>Methodological research</li>
+					<li>Open-source analytics development</li>
+					<li>Clinical applications</li>
+					<li>Community development</li>
 							<li>Clinical characterization, population-level estimation, or patient-level prediction</li>
-						</ul>
+				</ul>
 						
 						<h4 style="color: var(--primary-blue); margin-top: var(--spacing-xl); margin-bottom: var(--spacing-md); font-weight: 600;">Submission Guidelines</h4>
 						<ul>
@@ -1374,14 +1760,14 @@
 							<li>Include sections: Background, Methods, Results, Conclusion</li>
 							<li>References recommended (maximum 15)</li>
 							<li>Must be unpublished in peer-review literature (preprints acceptable)</li>
-						</ul>
+				</ul>
 						
 						<p style="margin-top: var(--spacing-lg);">
 							For questions about submissions, please contact <a href="mailto:ohdsi@jcrc.org.ug">ohdsi@jcrc.org.ug</a>
 						</p>
-					</div>
-				{/if}
 			</div>
+				{/if}
+		</div>
 		</div>
 	</div>
 </section>
@@ -2245,6 +2631,107 @@
 	</div>
 {/if}
 
+<!-- Symposium Highlights Section -->
+<section class="section bg-light">
+	<div class="container">
+		<div class="video-section">
+			<h2 class="section-title">Symposium Highlights</h2>
+			<p class="video-intro">
+				Watch the official highlight reel from the OHDSI Africa Symposium 2025, featuring keynote presentations, 
+				collaborative workshops, and memorable moments from Africa's premier health data science gathering.
+			</p>
+			<div class="video-wrapper">
+				<iframe 
+					src="https://www.youtube.com/embed/p1gAqFnBnvI" 
+					title="OHDSI Africa Symposium 2025 - Symposium Highlights" 
+					frameborder="0" 
+					allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+					referrerpolicy="strict-origin-when-cross-origin" 
+					allowfullscreen
+					loading="lazy"
+				></iframe>
+			</div>
+		</div>
+	</div>
+</section>
+
+<!-- Photo Gallery Section -->
+<!-- <section class="section" id="gallery">
+	<div class="container">
+		<div class="gallery-section">
+			<h2 class="section-title">Symposium Gallery</h2>
+			<p class="gallery-intro">
+				Explore moments captured throughout the symposium—from engaging presentations and hands-on workshops 
+				to networking sessions and collaborative discussions that brought together Africa's health data community.
+			</p>
+			
+			<div class="gallery-carousel">
+				<button 
+					class="gallery-nav-btn gallery-prev" 
+					on:click={prevGallerySlide}
+					aria-label="Previous photos"
+					disabled={currentGallerySlide === 0}
+				>
+					<span>‹</span>
+				</button>
+				
+				<div class="gallery-slider">
+					{#each gallerySlides as slidePhotos, slideIndex}
+						<div class="gallery-grid" class:active={currentGallerySlide === slideIndex}>
+							{#each slidePhotos as photo}
+								<div class="gallery-item" on:click={() => openLightbox(photo)} on:keypress={(e) => e.key === 'Enter' && openLightbox(photo)} role="button" tabindex="0">
+									<img src={photo.src} alt={photo.caption} loading="lazy" />
+									<div class="gallery-overlay">
+										<span class="gallery-icon">🔍</span>
+										<p class="gallery-caption">{photo.caption}</p>
+									</div>
+								</div>
+							{/each}
+						</div>
+					{/each}
+				</div>
+				
+				<button 
+					class="gallery-nav-btn gallery-next" 
+					on:click={nextGallerySlide}
+					aria-label="Next photos"
+					disabled={currentGallerySlide === totalGallerySlides - 1}
+				>
+					<span>›</span>
+				</button>
+			</div>
+			
+			<div class="gallery-indicators">
+				{#each Array(totalGallerySlides) as _, index}
+					<button
+						class="gallery-indicator"
+						class:active={currentGallerySlide === index}
+						on:click={() => goToGallerySlide(index)}
+						aria-label="Go to slide {index + 1}"
+					></button>
+				{/each}
+			</div>
+		</div>
+	</div>
+</section> -->
+
+<!-- Lightbox Modal -->
+<!-- {#if lightboxPhoto}
+	<div 
+		class="lightbox-overlay" 
+		on:click={closeLightbox}
+		on:keypress={(e) => e.key === 'Enter' && closeLightbox()}
+		role="button"
+		tabindex="0"
+	>
+		<div class="lightbox-content" on:click={(e) => e.stopPropagation()} on:keypress={(e) => e.stopPropagation()} role="dialog" tabindex="0">
+			<button class="lightbox-close" on:click={closeLightbox} aria-label="Close lightbox">×</button>
+			<img src={lightboxPhoto.src} alt={lightboxPhoto.caption} />
+			<p class="lightbox-caption">{lightboxPhoto.caption}</p>
+		</div>
+	</div>
+{/if} -->
+
 <!-- Venue & Travel Section -->
 <section class="section" id="venue">
 	<div class="venue-section">
@@ -2269,7 +2756,7 @@
 								<li>Wi-Fi available throughout</li>
 								<li>Tea and lunch provided on-site</li>
 								<li>Shuttle transportation arranged from Mestil Hotel for registered guests</li>
-							</ul>
+			</ul>
 							
 							<p style="margin-top: var(--spacing-lg);"><strong>Main Symposium (November 11–12, 2025)</strong></p>
 							<p><strong>Venue:</strong> Mestil Hotel & Residences, Nsambya, Kampala</p>
@@ -2360,7 +2847,7 @@
 							<p style="margin-top: var(--spacing-md);"><strong>Travel Tip:</strong> Confirm taxi fares before starting your journey.</p>
 						</div>
 					{/if}
-				</div>
+		</div>
 
 				<!-- General Information -->
 				<div class="venue-accordion-item">
@@ -2378,7 +2865,7 @@
 								<li>Euro: 1 EUR = 4,029 UGX (approx.)</li>
 								<li>British Pound: 1 GBP = 4,572 UGX (approx.)</li>
 								<li>Major credit cards accepted. ATMs available in shopping malls.</li>
-							</ul>
+			</ul>
 							
 							<p style="margin-top: var(--spacing-md);"><strong>Time Zone:</strong> East Africa Time (EAT, UTC+3)</p>
 							
@@ -2427,7 +2914,7 @@
 					{/if}
 				</div>
 				</div>
-			</div>
+		</div>
 
 			<!-- Right: Venue Image -->
 			<div class="venue-image-container">
