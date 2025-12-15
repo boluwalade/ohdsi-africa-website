@@ -306,6 +306,51 @@
 		line-height: 1.6;
 	}
 
+	/* Featured Image Styles */
+	.featured-image-section {
+		max-width: 1200px;
+		margin: 0 auto;
+	}
+
+	.featured-image-container {
+		position: relative;
+		width: 100%;
+		border-radius: var(--radius-lg);
+		overflow: hidden;
+		box-shadow: 0 8px 24px rgba(0, 49, 66, 0.15);
+		background: var(--light-gray);
+		min-height: 400px;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
+
+	.featured-image {
+		width: 100%;
+		height: auto;
+		display: block;
+		object-fit: cover;
+		max-height: 600px;
+	}
+
+	.featured-image-caption {
+		padding: var(--spacing-lg);
+		background: linear-gradient(to top, rgba(0, 49, 66, 0.9), transparent);
+		position: absolute;
+		bottom: 0;
+		left: 0;
+		right: 0;
+		color: var(--white);
+	}
+
+	.featured-image-caption p {
+		margin: 0;
+		font-size: var(--font-size-base);
+		line-height: 1.5;
+		text-align: center;
+		font-weight: 500;
+	}
+
 	/* Gallery Section */
 	.gallery-section {
 		max-width: 1200px;
@@ -1278,11 +1323,20 @@
 		.hero-banner .container,
 		.about-section,
 		.video-section,
+		.featured-image-section,
 		.gallery-section,
 		.programme-intro,
 		.venue-section,
 		.speakers-intro {
 			padding: 0 var(--spacing-lg);
+		}
+
+		.featured-image {
+			max-height: 400px;
+		}
+
+		.featured-image-caption p {
+			font-size: var(--font-size-sm);
 		}
 		
 		.gallery-grid {
@@ -2650,6 +2704,26 @@
 					allowfullscreen
 					loading="lazy"
 				></iframe>
+			</div>
+		</div>
+	</div>
+</section>
+
+<!-- Featured Symposium Image -->
+<section class="section" id="featured-image">
+	<div class="container">
+		<div class="featured-image-section">
+			<h2 class="section-title">Symposium in Focus</h2>
+			<div class="featured-image-container">
+				<img 
+					src="/files/symposium-featured-placeholder.jpg" 
+					alt="OHDSI Africa Symposium 2025 - Featured Moment" 
+					class="featured-image"
+					loading="lazy"
+				/>
+				<div class="featured-image-caption">
+					<p>Add your featured symposium image here - Replace the placeholder with your main event photo</p>
+				</div>
 			</div>
 		</div>
 	</div>

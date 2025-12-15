@@ -1,4 +1,7 @@
 <section id="home" class="hero">
+	<div class="hero-visual">
+		<img src="/files/african-symp-group-photo.jpg" alt="OHDSI Africa Symposium 2025" class="africa-logo">
+	</div>
 	<div class="hero-content">
 		<h1 class="hero-title">Welcome to OHDSI Africa!</h1>
 		<p class="hero-description">
@@ -19,10 +22,5 @@
 			Read more <a href="/about">about us</a>, about <a href="/community">our goals</a>, 
 			and how you can <a href="/contact">support the OHDSI Africa community</a>.
 		</p>
-	</div>
-	<div class="hero-visual">
-		<div class="africa-logo-container">
-			<img src="/files/ohdsi africa symposium 2025.jpeg" alt="OHDSI Africa Symposium 2025" class="africa-logo">
-		</div>
 	</div>
 </section>
